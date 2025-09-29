@@ -5,14 +5,6 @@
 
 
 
-#include "../nonnon/game/helper.c"
-#include "../nonnon/game/transition.c"
-
-#include "../nonnon/win32/gdi.c"
-
-
-
-
 #define N_HUNYAPIYO3_GO       @( "Go!" )
 #define N_HUNYAPIYO3_OK       @( "OK"  )
 
@@ -83,12 +75,15 @@ typedef struct {
 
 	NonnonGame   *self;
 	NSPoint       pt;
-	n_bmp         canvas;
+	n_bmp         canvas_base;
+	n_bmp         canvas; // [!] : alias of NSBitmapImageRep
 	n_posix_bool  refresh;
 	n_posix_bool  click;
 	n_posix_bool  click_menu;
 	n_posix_bool  sound_lock_onoff;
 	u32           sound_lock;
+
+	NSBitmapImageRep *rep;
 
 	n_type_gfx    zoom;
 	n_type_gfx    sx, sy;
@@ -1187,8 +1182,11 @@ n_hunyapiyo3_init( n_hunyapiyo3 *p )
 
 	n_hunyapiyo3_reset( p );
 
-	n_bmp_zero( &p->canvas );
-	n_bmp_new( &p->canvas, p->sx, p->sy + p->bar );
+	n_bmp_zero( &p->canvas_base );
+	n_bmp_new( &p->canvas_base, p->sx, p->sy + p->bar );
+
+	p->rep = n_mac_image_NSBitmapImageRep( &p->canvas_base );
+	n_mac_image_imagerep_alias( p->rep, &p->canvas );
 
 	n_hunyapiyo3_gdi_background( p, &p->bmp_bg );
 
@@ -1203,26 +1201,6 @@ n_hunyapiyo3_init( n_hunyapiyo3 *p )
 void
 n_hunyapiyo3_exit( n_hunyapiyo3 *p )
 {
-
-	{
-
-		int i = 0;
-		n_posix_loop
-		{
-
-			n_bmp_free( &p->bmp[ i ] );
-
-			i++;
-			if ( i >= N_HUNYAPIYO3_BMP_ALL ) { break; }
-		}
-
-	}
-
-
-	n_bmp_free( &p->bmp_bg     );
-	n_bmp_free( &p->bmp_result );
-
-
 	return;
 }
 

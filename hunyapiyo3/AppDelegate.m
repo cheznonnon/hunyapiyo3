@@ -58,15 +58,21 @@
 		     object: nil
 	];
 
-	[_n_game n_mac_game_canvas_resize:_window width:-1 height:-1];
+
+	[_n_game n_mac_game_launch:_window];
 
 }
+
+
+
 
 - (void) accentColorChanged:(NSNotification *)notification
 {
 //NSLog( @"accentColorChanged" );
 
-	[_n_game n_accentColorChanged];
+	// [x] : Sonoma : buggy : old value is set
+
+	n_mac_timer_init_once( self, @selector( n_timer_method_color ), 200 );
 
 }
 
@@ -74,9 +80,22 @@
 {
 //NSLog( @"darkModeChanged" );
 
+	// [x] : Sonoma : buggy : old value is set
+
+	n_mac_timer_init_once( self, @selector( n_timer_method_color ), 200 );
+
+}
+
+- (void) n_timer_method_color
+{
+//NSLog( @"n_timer_method_color" );
+
 	[_n_game n_accentColorChanged];
 
 }
+
+
+
 
 - (void) windowWillClose:(NSNotification *)notification
 {
@@ -93,9 +112,6 @@
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification {
 //NSLog( @"applicationWillFinishLaunching" );
-
-	[_n_game n_mac_game_canvas_resize:_window width:-1 height:-1];
-	
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {

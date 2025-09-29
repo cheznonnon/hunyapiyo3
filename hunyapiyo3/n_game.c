@@ -42,6 +42,12 @@
 #include "../nonnon/neutral/bmp/ui/pie_throbber.c"
 
 
+#include "../nonnon/game/helper.c"
+#include "../nonnon/game/transition.c"
+
+#include "../nonnon/win32/gdi.c"
+
+
 
 
 //@interface NonnonGame : NSView <AVAudioPlayerDelegate>
@@ -64,10 +70,11 @@
 @implementation NonnonGame {
 
 	n_hunyapiyo3 hunyapiyo3;
+	NSRect       hunyapiyo3_rect;
 
 }
 
-
+/*
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
 //NSLog( @"initWithCoder" );
@@ -75,43 +82,45 @@
 	self = [super initWithCoder:coder];
 	if ( self )
 	{
-		n_hunyapiyo3_zero( &hunyapiyo3 );
-		n_hunyapiyo3_init( &hunyapiyo3 );
-//NSLog( @"%d %d", hunyapiyo3.sx, hunyapiyo3.sy );
-
-		hunyapiyo3.self = self;
-
-		n_mac_timer_init( self, @selector( n_timer_method ), 1 );
 	}
 
 
 	return self;
 }
+*/
 
-
-- (void) n_mac_game_canvas_resize:(NSWindow*)window width:(n_type_gfx)sx height:(n_type_gfx)sy
+- (void) n_mac_game_launch:(NSWindow*)window
 {
 
-	if ( sx == -1 ) { sx = hunyapiyo3.sx; }
-	if ( sy == -1 ) { sy = hunyapiyo3.sy + hunyapiyo3.bar; }
+	n_hunyapiyo3 *p = &hunyapiyo3;
 
-	//n_bmp_new( &hunyapiyo3.canvas, sx, sy );
-	//n_bmp_flush( &hunyapiyo3.canvas, n_bmp_rgb_mac( 0,200,255 ) );
-	//n_bmp_carboncopy( &hunyapiyo3.bmp_bg, &hunyapiyo3.canvas );
+
+	n_hunyapiyo3_init( p );
+//NSLog( @"%d %d", p->sx, p->sy );
+
+	p->self = self;
+
+
+	CGFloat sx = p->sx;
+	CGFloat sy = p->sy + p->bar;
+
 
 	NSSize size = NSMakeSize( sx,sy );
 
 	[window setContentMinSize:size];
 	[window setContentMaxSize:size];
+	[window setContentSize   :size];
 
-	NSRect rect = NSMakeRect( 0,0,sx,sy );
-	[self setFrame:rect];
 
-	[window setContentSize:size];
+	hunyapiyo3_rect = NSMakeRect( 0,0,sx,sy );
+	[self setFrame:hunyapiyo3_rect];
 
-	hunyapiyo3.refresh = TRUE;
 
-	[window display];
+	n_mac_window_centering( window );
+
+
+	p->refresh = TRUE;
+	n_mac_timer_init( p->self, @selector( n_timer_method ), 1 );
 
 }
 
@@ -160,7 +169,7 @@
 //NSLog( @"%f", CACurrentMediaTime() );
 
 	static u32 timer = 0;
-	if ( n_game_timer( &timer, 12 ) )
+	if ( n_game_timer( &timer, 6 ) )
 	{
 		n_hunyapiyo3_loop( &hunyapiyo3 );
 	}
@@ -181,14 +190,16 @@
 {
 //NSLog( @"drawRect" );
 
-	n_type_gfx sx = N_BMP_SX( &hunyapiyo3.canvas );
-	n_type_gfx sy = N_BMP_SY( &hunyapiyo3.canvas );
+	n_hunyapiyo3 *p = &hunyapiyo3;
 
-	rect = NSMakeRect( 0,0,sx,sy );
 
-//n_bmp_line( &hunyapiyo3.canvas, 0,sy/2, sx,sy/2, n_bmp_rgb( 128,128,128 ) );
+	//n_mac_image_nbmp_direct_draw_fast( &p->canvas, &hunyapiyo3_rect, n_posix_false );
 
-	n_mac_image_nbmp_direct_draw_fast( &hunyapiyo3.canvas, &rect, n_posix_false );
+	//n_mac_image_imagerep_sync( p->rep, &p->canvas );
+
+	n_mac_image_imagerep_alias_fast( p->rep, &p->canvas );
+
+	n_mac_image_nbmp_direct_draw_faster( p->rep, &hunyapiyo3_rect, n_posix_false );
 
 }
 
