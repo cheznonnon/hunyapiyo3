@@ -166,8 +166,6 @@
 - (void) n_timer_method
 {
 
-//NSLog( @"%f", CACurrentMediaTime() );
-
 	static u32 timer = 0;
 	if ( n_game_timer( &timer, 6 ) )
 	{
