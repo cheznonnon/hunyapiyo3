@@ -77,10 +77,10 @@ typedef struct {
 	NSPoint       pt;
 	n_bmp         canvas_base;
 	n_bmp         canvas; // [!] : alias of NSBitmapImageRep
-	n_posix_bool  refresh;
-	n_posix_bool  click;
-	n_posix_bool  click_menu;
-	n_posix_bool  sound_lock_onoff;
+	BOOL          refresh;
+	BOOL          click;
+	BOOL          click_menu;
+	BOOL          sound_lock_onoff;
 	u32           sound_lock;
 
 	NSBitmapImageRep *rep;
@@ -107,7 +107,7 @@ typedef struct {
 
 	int           map[ N_HUNYAPIYO3_MAP_ALL ];
 	int           ret[ N_HUNYAPIYO3_MAP_ALL ];
-	n_posix_bool  answer_check_onoff;
+	BOOL          answer_check_onoff;
 
 	int           phase;
 	u32           phase_timer;
@@ -116,7 +116,7 @@ typedef struct {
 	int           result_index;
 
 	int           score;
-	n_posix_bool  is_fanfare;
+	BOOL          is_fanfare;
 
 	n_type_real   text_jump_coeff;
 	u32           text_jump_timer;
@@ -136,13 +136,13 @@ typedef struct {
 	NSString     *font_server_text;
 	int           font_server_number;
 
-	n_posix_bool  transition_onoff;
+	BOOL          transition_onoff;
 	n_bmp         transition_bmp_old;
 	n_bmp         transition_bmp_new;
 	double        transition_percent;
 	u32           transition_color_old;
 
-	n_posix_bool  animation_onoff;
+	BOOL          animation_onoff;
 	n_bmp         animation_bmp_tmp;
 	n_bmp         animation_bmp_old;
 	n_bmp         animation_bmp_new;
@@ -166,6 +166,18 @@ typedef struct {
 
 // [!] : this is important to play
 AVAudioPlayer *n_hunyapiyo3_snd;
+
+
+
+
+n_type_gfx
+n_game_centering( n_type_gfx a, n_type_gfx b )
+{
+
+	// [!] : ( ( a / 2 ) - ( b / 2 ) ) == ( ( a - b ) / 2 )
+
+	return ( a - b ) / 2;
+}
 
 
 
@@ -274,34 +286,27 @@ n_hunyapiyo3_sound_play( n_hunyapiyo3 *p, int id )
 	} else
 	if ( id == N_HUNYAPIYO3_SOUND_ANSWER_O )
 	{
-		n_hunyapiyo3_snd = n_mac_sound_init( @"answer_o", @"wav" );
-		p->sound_lock_onoff = n_posix_true;
-		p->sound_lock      = n_posix_tickcount();
-
-		n_hunyapiyo3_snd.volume = 0.5;
+		n_hunyapiyo3_snd    = n_mac_sound_init( @"answer_o", @"wav" );
+		p->sound_lock_onoff = TRUE;
+		p->sound_lock       = n_posix_tickcount();
 	} else
 	if ( id == N_HUNYAPIYO3_SOUND_ANSWER_X )
 	{
-		n_hunyapiyo3_snd = n_mac_sound_init( @"answer_x", @"wav" );
-		p->sound_lock_onoff = n_posix_true;
-		p->sound_lock      = n_posix_tickcount();
-
-		n_hunyapiyo3_snd.volume = 0.5;
+		n_hunyapiyo3_snd    = n_mac_sound_init( @"answer_x", @"wav" );
+		p->sound_lock_onoff = TRUE;
+		p->sound_lock       = n_posix_tickcount();
 	} else
 	if ( id == N_HUNYAPIYO3_SOUND_COUNTDOWN_1 )
 	{
 		n_hunyapiyo3_snd = n_mac_sound_init( @"countdown_1", @"wav" );
-		n_hunyapiyo3_snd.volume = 0.33;
 	} else
 	if ( id == N_HUNYAPIYO3_SOUND_COUNTDOWN_2 )
 	{
 		n_hunyapiyo3_snd = n_mac_sound_init( @"countdown_2", @"wav" );
-		n_hunyapiyo3_snd.volume = 0.33;
 	} else
 	if ( id == N_HUNYAPIYO3_SOUND_COUNTDOWN_3 )
 	{
 		n_hunyapiyo3_snd = n_mac_sound_init( @"countdown_3", @"wav" );
-		n_hunyapiyo3_snd.volume = 0.33;
 	}
 
 	//n_hunyapiyo3_snd.delegate = p->self;
@@ -421,7 +426,7 @@ n_hunyapiyo3_reset_panel( n_hunyapiyo3 *p )
 	// [!] : use 4 panels always
 
 
-	const n_posix_bool shuffle = n_posix_true;
+	const BOOL shuffle = TRUE;
 
 
 	int neko[ N_HUNYAPIYO3_RANDOM ];
@@ -526,7 +531,7 @@ n_hunyapiyo3_reset( n_hunyapiyo3 *p )
 
 	p->score = 0;
 
-	p->answer_check_onoff = n_posix_false;
+	p->answer_check_onoff = FALSE;
 
 	n_hunyapiyo3_reset_panel( p );
 
@@ -569,7 +574,7 @@ n_hunyapiyo3_font_server( n_hunyapiyo3 *p )
 		const int fontsize = p->unit / 2;
 
 
-		if ( n_game_timer( &p->text_jump_timer, 25 ) ) { p->text_jump_coeff += 0.01; }
+		if ( n_bmp_ui_timer( &p->text_jump_timer, 25 ) ) { p->text_jump_coeff += 0.01; }
 
 		double     d = fabs( sin( 2.0 * M_PI * p->text_jump_coeff ) );
 		n_type_gfx y = ( fontsize / 2 ) * d; y += ( fontsize / 4 );
@@ -691,7 +696,7 @@ n_hunyapiyo3_font_server( n_hunyapiyo3 *p )
 		const int fontsize = p->unit / 2;
 
 
-		if ( n_game_timer( &p->text_jump_timer, 25 ) ) { p->text_jump_coeff += 0.01; }
+		if ( n_bmp_ui_timer( &p->text_jump_timer, 25 ) ) { p->text_jump_coeff += 0.01; }
 
 		double     d = fabs( sin( 2.0 * M_PI * p->text_jump_coeff ) );
 		n_type_gfx y = ( fontsize / 2 ) * d; y += ( fontsize / 4 );
@@ -823,12 +828,12 @@ n_hunyapiyo3_progressbar( n_hunyapiyo3 *p, n_type_real percent_coeff )
 	return;
 }
 
-n_posix_bool
+BOOL
 n_hunyapiyo3_button( n_hunyapiyo3 *p, NSString *str, n_bmp *bmp_target )
 {
 //NSLog( @"%f %f %d %d", pt.x, pt.y, N_BMP_SY( &p->canvas ), p->sy );
 
-	n_posix_bool ret = n_posix_false;
+	BOOL ret = FALSE;
 
 
 //NSLog( @"%f %f", p->pt.x, p->pt.y );
@@ -850,7 +855,7 @@ n_hunyapiyo3_button( n_hunyapiyo3 *p, NSString *str, n_bmp *bmp_target )
 	{
 		if ( p->click )
 		{
-			ret = n_posix_true;
+			ret = TRUE;
 		}
 	} else {
 		p->button_press_offset = 0;
@@ -875,7 +880,7 @@ n_hunyapiyo3_main( n_hunyapiyo3 *p )
 	n_bmp_flush_fastcopy( &p->bmp_bg, &p->canvas );
 
 
-	n_posix_bool ret = n_hunyapiyo3_button( p, N_HUNYAPIYO3_GO, &p->canvas );
+	BOOL ret = n_hunyapiyo3_button( p, N_HUNYAPIYO3_GO, &p->canvas );
 	if ( ret )
 	{
 		p->phase = N_HUNYAPIYO3_PHASE_RSLT;
@@ -912,12 +917,12 @@ n_hunyapiyo3_main( n_hunyapiyo3 *p )
 			int anim_f = -1;
 			int anim_t = -1;
 
-			p->animation_type = N_GAME_TRANSITION_NOTHING;
+			p->animation_type = N_BMP_UI_TRANSITION_NOTHING;
 
 			color_frame = N_HUNYAPIYO3_COLOR_FRAME_O;
 			if ( p->click )
 			{
-				p->animation_type = N_GAME_TRANSITION_SCROLL_D;
+				p->animation_type = N_BMP_UI_TRANSITION_SCROLL_D;
 
 				anim_f = p->ret[ ret_pos ];
 
@@ -931,7 +936,7 @@ n_hunyapiyo3_main( n_hunyapiyo3 *p )
 			} else
 			if ( p->click_menu )
 			{
-				p->animation_type = N_GAME_TRANSITION_SCROLL_U;
+				p->animation_type = N_BMP_UI_TRANSITION_SCROLL_U;
 
 				anim_f = p->ret[ ret_pos ];
 
@@ -944,7 +949,7 @@ n_hunyapiyo3_main( n_hunyapiyo3 *p )
 				anim_t = p->ret[ ret_pos ];
 			}
 
-			if ( p->animation_type != N_GAME_TRANSITION_NOTHING )
+			if ( p->animation_type != N_BMP_UI_TRANSITION_NOTHING )
 			{
 				p->animation_onoff = TRUE;
 
@@ -1032,7 +1037,7 @@ n_hunyapiyo3_result( n_hunyapiyo3 *p )
 
 		p->pt = NSMakePoint( -1, -1 );
 
-		if ( p->score == N_HUNYAPIYO3_MAP_ALL ) { p->is_fanfare = n_posix_true; }
+		if ( p->score == N_HUNYAPIYO3_MAP_ALL ) { p->is_fanfare = TRUE; }
 
 		p->font_server_text = @"";
 
@@ -1055,7 +1060,7 @@ n_hunyapiyo3_last( n_hunyapiyo3 *p )
 	n_bmp_flush_fastcopy( &p->bmp_bg, &p->canvas );
 
 
-	n_posix_bool ret = n_hunyapiyo3_button( p, N_HUNYAPIYO3_OK, &p->canvas );
+	BOOL ret = n_hunyapiyo3_button( p, N_HUNYAPIYO3_OK, &p->canvas );
 	if ( ret )
 	{
 		p->button_press_offset = 0;
@@ -1136,11 +1141,11 @@ n_hunyapiyo3_init( n_hunyapiyo3 *p )
 
 	// Global
 
-	n_bmp_safemode = n_posix_false;
+	n_bmp_safemode = FALSE;
 
-	n_bmp_transparent_onoff_default = n_posix_false;
+	n_bmp_transparent_onoff_default = FALSE;
 
-	n_bmp_flip_onoff = n_posix_true;
+	n_bmp_flip_onoff = TRUE;
 
 	n_random_shuffle();
 
@@ -1212,18 +1217,18 @@ n_hunyapiyo3_loop( n_hunyapiyo3 *p )
 	{
 //NSLog( @"%f", p->transition_percent );
 
-		n_posix_bool ret = n_game_transition
+		BOOL ret = n_bmp_ui_transition
 		(
 			&p->canvas,
 			&p->transition_bmp_old,
 			&p->transition_bmp_new,
 			N_HUNYAPIYO3_FADE_MSEC,
 			&p->transition_percent,
-			N_GAME_TRANSITION_FADE
+			N_BMP_UI_TRANSITION_FADE
 		);
 		if ( ret )
 		{
-			p->transition_onoff = n_posix_false;
+			p->transition_onoff = FALSE;
 
 			n_bmp_free( &p->transition_bmp_old );
 			n_bmp_free( &p->transition_bmp_new );
@@ -1238,7 +1243,7 @@ n_hunyapiyo3_loop( n_hunyapiyo3 *p )
 
 		n_bmp_flush( &p->animation_bmp_tmp, n_bmp_white_invisible );
 
-		n_posix_bool ret = n_game_transition
+		BOOL ret = n_bmp_ui_transition
 		(
 			&p->animation_bmp_tmp,
 			&p->animation_bmp_old,
@@ -1248,7 +1253,7 @@ n_hunyapiyo3_loop( n_hunyapiyo3 *p )
 			p->animation_type
 		);
 
-		n_bmp_transcopy
+		n_bmp_fastcopy
 		(
 			&p->bmp_bg,
 			&p->canvas,
@@ -1275,7 +1280,7 @@ n_hunyapiyo3_loop( n_hunyapiyo3 *p )
 
 		if ( ret )
 		{
-			p->animation_onoff = n_posix_false;
+			p->animation_onoff = FALSE;
 
 			n_bmp_free( &p->animation_bmp_old );
 			n_bmp_free( &p->animation_bmp_new );
@@ -1291,9 +1296,9 @@ n_hunyapiyo3_loop( n_hunyapiyo3 *p )
 
 	if ( p->sound_lock_onoff )
 	{
-		if ( n_game_timer( &p->sound_lock, N_HUNYAPIYO3_O_X_SOUND_MSEC ) )
+		if ( n_bmp_ui_timer( &p->sound_lock, N_HUNYAPIYO3_O_X_SOUND_MSEC ) )
 		{
-			p->sound_lock_onoff = n_posix_false;
+			p->sound_lock_onoff = FALSE;
 		} else {
 			return;
 		}
@@ -1334,7 +1339,7 @@ n_hunyapiyo3_loop( n_hunyapiyo3 *p )
 //static BOOL stop = FALSE;
 //if ( stop == FALSE ) { stop = TRUE; } else { return; }
 
-		if ( n_game_timer( &p->phase_timer, 1000 ) )
+		if ( n_bmp_ui_timer( &p->phase_timer, 1000 ) )
 		{
 //NSLog( @"2 : %d", p->phase_timer );
 
@@ -1360,7 +1365,7 @@ n_hunyapiyo3_loop( n_hunyapiyo3 *p )
 	{
 //return;
 
-		if ( n_game_timer( &p->phase_timer, 1000 ) )
+		if ( n_bmp_ui_timer( &p->phase_timer, 1000 ) )
 		{
 //n_game_hwndprintf_literal( "1" );
 
@@ -1386,7 +1391,7 @@ n_hunyapiyo3_loop( n_hunyapiyo3 *p )
 	if ( p->phase == N_HUNYAPIYO3_PHASE_CD_1 )
 	{
 
-		if ( n_game_timer( &p->phase_timer, 1000 ) )
+		if ( n_bmp_ui_timer( &p->phase_timer, 1000 ) )
 		{
 //n_game_hwndprintf( N_HUNYAPIYO3_APPNAME );
 
@@ -1419,7 +1424,7 @@ n_hunyapiyo3_loop( n_hunyapiyo3 *p )
 	if ( p->phase == N_HUNYAPIYO3_PHASE_INIT )
 	{
 
-		if ( n_game_timer( &p->phase_timer, N_HUNYAPIYO3_SHORTTERM_MSEC ) )
+		if ( n_bmp_ui_timer( &p->phase_timer, N_HUNYAPIYO3_SHORTTERM_MSEC ) )
 		{
 			p->phase = N_HUNYAPIYO3_PHASE_MAIN;
 
@@ -1449,7 +1454,7 @@ n_hunyapiyo3_loop( n_hunyapiyo3 *p )
 
 		if ( p->is_fanfare )
 		{
-			p->is_fanfare = n_posix_false;
+			p->is_fanfare = FALSE;
 			n_hunyapiyo3_sound_play( p, N_HUNYAPIYO3_SOUND_FANFARE );
 		}
 

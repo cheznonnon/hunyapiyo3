@@ -30,22 +30,7 @@
 
 
 
-#import <Cocoa/Cocoa.h>
-
-
-#include "../nonnon/mac/_mac.c"
-#include "../nonnon/mac/image.c"
-#include "../nonnon/mac/sound.c"
-#include "../nonnon/mac/window.c"
-
-
-#include "../nonnon/neutral/bmp/ui/pie_throbber.c"
-
-
-#include "../nonnon/game/helper.c"
-#include "../nonnon/game/transition.c"
-
-#include "../nonnon/win32/gdi.c"
+#include "extern.h"
 
 
 
@@ -167,7 +152,7 @@
 {
 
 	static u32 timer = 0;
-	if ( n_game_timer( &timer, 6 ) )
+	if ( n_bmp_ui_timer( &timer, 6 ) )
 	{
 		n_hunyapiyo3_loop( &hunyapiyo3 );
 	}
@@ -191,13 +176,13 @@
 	n_hunyapiyo3 *p = &hunyapiyo3;
 
 
-	//n_mac_image_nbmp_direct_draw_fast( &p->canvas, &hunyapiyo3_rect, n_posix_false );
+	//n_mac_image_nbmp_direct_draw_fast( &p->canvas, &hunyapiyo3_rect, FALSE );
 
 	//n_mac_image_imagerep_sync( p->rep, &p->canvas );
 
 	n_mac_image_imagerep_alias_fast( p->rep, &p->canvas );
 
-	n_mac_image_nbmp_direct_draw_faster( p->rep, &hunyapiyo3_rect, n_posix_false );
+	n_mac_image_nbmp_direct_draw_faster( p->rep, &hunyapiyo3_rect, FALSE );
 
 }
 
@@ -258,7 +243,7 @@
 
 	if ( hunyapiyo3.animation_onoff ) { return; }
 
-	hunyapiyo3.click_menu = n_posix_true;
+	hunyapiyo3.click_menu = TRUE;
 
 	if ( hunyapiyo3.phase == N_HUNYAPIYO3_PHASE_MAIN )
 	{
@@ -270,17 +255,17 @@
 		if ( hunyapiyo3.answer_check_onoff )
 		{
 			n_hunyapiyo3_sound_play( &hunyapiyo3, N_HUNYAPIYO3_SOUND_CLICK );
-			hunyapiyo3.answer_check_onoff = n_posix_false;
+			hunyapiyo3.answer_check_onoff = FALSE;
 		} else {
 			n_hunyapiyo3_sound_play( &hunyapiyo3, N_HUNYAPIYO3_SOUND_CLICK );
-			hunyapiyo3.answer_check_onoff = n_posix_true;
+			hunyapiyo3.answer_check_onoff = TRUE;
 		}
 
 		hunyapiyo3.pt = n_mac_image_position_flip( &hunyapiyo3.canvas, [theEvent locationInWindow] );
 		n_hunyapiyo3_last( &hunyapiyo3 );
 	}
 
-	hunyapiyo3.click_menu = n_posix_false;
+	hunyapiyo3.click_menu = FALSE;
 
 }
 
@@ -292,7 +277,7 @@
 
 	if ( hunyapiyo3.animation_onoff ) { return; }
 
-	hunyapiyo3.click = n_posix_true;
+	hunyapiyo3.click = TRUE;
 
 	if ( hunyapiyo3.phase == N_HUNYAPIYO3_PHASE_CLCK )
 	{
@@ -309,7 +294,7 @@
 		n_hunyapiyo3_last( &hunyapiyo3 );
 	}
 
-	hunyapiyo3.click = n_posix_false;
+	hunyapiyo3.click = FALSE;
 
 }
 
@@ -356,13 +341,13 @@
 
 		if ( 0 > [theEvent deltaY] )
 		{
-			hunyapiyo3.click      = n_posix_true;	
+			hunyapiyo3.click      = TRUE;	
 		} else {
-			hunyapiyo3.click_menu = n_posix_true;
+			hunyapiyo3.click_menu = TRUE;
 		}
 		n_hunyapiyo3_main( &hunyapiyo3 );
 
-		hunyapiyo3.click = hunyapiyo3.click_menu = n_posix_false;
+		hunyapiyo3.click = hunyapiyo3.click_menu = FALSE;
 
 	}
 
@@ -375,7 +360,7 @@
 
 	// [x] : this is called after more than sound msec
 
-	//hunyapiyo3.sound_lock = n_posix_false;
+	//hunyapiyo3.sound_lock = FALSE;
 }
 
 
