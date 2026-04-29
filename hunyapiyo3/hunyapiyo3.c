@@ -336,9 +336,9 @@ n_hunyapiyo3_metrics( n_hunyapiyo3 *p )
 	
 	p->button_press_offset_default = 2;
 
-//n_posix_debug_literal( " %d ", p->unit );
+//NSLog( @"%d", p->unit );
 	p->contour_size             = p->unit / 30;
-	p->countdown_font_size_unit = p->unit /  5;
+	p->countdown_font_size_unit = p->unit / 20;
 	p->countdown_font_size_max  = (n_type_gfx) ( (n_type_real) p->sx * 0.5 );
 	p->message_font_size        = p->sx   /  6;
 
