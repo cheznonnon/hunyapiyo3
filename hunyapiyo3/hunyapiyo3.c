@@ -19,7 +19,7 @@
 #define N_HUNYAPIYO3_COLOR_MIXER_O  n_bmp_rgb_mac( 255, 255, 255 )
 #define N_HUNYAPIYO3_COLOR_MIXER_X  n_bmp_rgb_mac(   1,   1,   1 )
 #define N_HUNYAPIYO3_COLOR_TEXT     n_bmp_white
-#define N_HUNYAPIYO3_COLOR_CONTOUR  n_bmp_rgb_mac(   0, 150, 200 )
+#define N_HUNYAPIYO3_COLOR_OUTLINE  n_bmp_rgb_mac(   0, 150, 200 )
 #define N_HUNYAPIYO3_COLOR_SHAFT    n_bmp_rgb_mac(   0, 150, 200 )
 #define N_HUNYAPIYO3_COLOR_PROGRESS n_bmp_rgb_mac(   0, 200, 255 )
 
@@ -64,7 +64,7 @@
 #define N_HUNYAPIYO3_ANIM_MSEC ( 333 )
 
 
-#define N_HUNYAPIYO3_TEXT_EFFECT N_MAC_IMAGE_TEXT_CONTOUR
+#define N_HUNYAPIYO3_TEXT_EFFECT N_MAC_IMAGE_TEXT_OUTLINE
 
 
 
@@ -207,22 +207,40 @@ n_hunyapiyo3_gdi_effect( n_hunyapiyo3 *p, n_bmp *bmp, NSString *nsstr, n_type_gf
 
 	n_gdi gdi; n_gdi_zero( &gdi );
 
-	gdi.base_color_bg       = n_bmp_argb( 0,255,255,255 );
-	gdi.base_color_fg       = n_bmp_argb( 0,255,255,255 );
-	gdi.base_style          = N_GDI_BASE_SOLID;
+	gdi.base_color_bg   = n_bmp_argb( 0,255,255,255 );
+	gdi.base_color_fg   = n_bmp_argb( 0,255,255,255 );
+	gdi.base_style      = N_GDI_BASE_SOLID;
 
-	gdi.frame_style         = N_GDI_FRAME_DEFAULT;
+	gdi.frame_style     = N_GDI_FRAME_DEFAULT;
 
-	gdi.text                = n_mac_nsstring2str( nsstr );
-	gdi.text_font           = N_HUNYAPIYO3_FONT_NAME;
-	gdi.text_size           = fontsize;
-	//gdi.text_style          = N_GDI_TEXT_POP | N_GDI_TEXT_MAC_NO_CROP;
-	gdi.text_style          = N_GDI_TEXT_CONTOUR | N_GDI_TEXT_MAC_NO_CROP;
-	gdi.text_color_main     = n_bmp_rgb( 255,255,255 );
-	gdi.text_color_contour  = p->color_bg;
-	gdi.text_fxsize1        = 2;
-	gdi.text_fxsize2        = 2;
+	gdi.text            = n_mac_nsstring2str( nsstr );
+	gdi.text_font       = N_HUNYAPIYO3_FONT_NAME;
+	gdi.text_size       = fontsize;
+	gdi.text_style      = N_GDI_TEXT_SMOOTH | N_GDI_TEXT_MAC_NO_CROP;
+	gdi.text_color_main = n_bmp_rgb( 255,255,255 );
 
+	int n = 0;
+
+	gdi.text_effect_style[ n ] = N_GDI_EFFECT_OUTLINE;
+	//gdi.text_effect_style[ n ] = N_GDI_EFFECT_SINK;
+	gdi.text_effect_color[ n ] = p->color_bg;
+	gdi.text_effect_param[ n ] = 2;
+/*
+	n++;
+	gdi.text_effect_style[ n ] = N_GDI_EFFECT_OUTLINE;
+	gdi.text_effect_color[ n ] = n_bmp_white;
+	gdi.text_effect_param[ n ] = 4;
+
+	n++;
+	gdi.text_effect_style[ n ] = N_GDI_EFFECT_OUTLINE;
+	gdi.text_effect_color[ n ] = n_bmp_rgb( 111,111,111 );
+	gdi.text_effect_param[ n ] = 1;
+
+	n++;
+	gdi.text_effect_style[ n ] = N_GDI_EFFECT_SHADOW_FOG;
+	gdi.text_effect_color[ n ] = n_bmp_rgb( 111,111,111 );
+	gdi.text_effect_param[ n ] = 3;
+*/
 	n_gdi_bmp( &gdi, &p->bmp_font );
 
 	n_string_free( gdi.text );
