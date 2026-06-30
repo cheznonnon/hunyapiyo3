@@ -11,39 +11,13 @@
 #ifdef N_GITHUB_REPO
 
 
-#import <Cocoa/Cocoa.h>
-
-
-#include "../nonnon/mac/_mac.c"
-#include "../nonnon/mac/image.c"
-#include "../nonnon/mac/sound.c"
-#include "../nonnon/mac/window.c"
-
-
-#include "../nonnon/neutral/bmp/ui/pie_throbber.c"
-#include "../nonnon/neutral/bmp/ui/timer.c"
-#include "../nonnon/neutral/bmp/ui/transition.c"
-
-#include "../nonnon/bridge/gdi.c"
+#include "../nonnon/bridge/app/hunyapiyo3/hunyapiyo3.c"
 
 
 #else  // #ifdef N_GITHUB_REPO
 
 
-#import <Cocoa/Cocoa.h>
-
-
-#include "../../nonnon/mac/_mac.c"
-#include "../../nonnon/mac/image.c"
-#include "../../nonnon/mac/sound.c"
-#include "../../nonnon/mac/window.c"
-
-
-#include "../../nonnon/neutral/bmp/ui/pie_throbber.c"
-#include "../../nonnon/neutral/bmp/ui/timer.c"
-#include "../../nonnon/neutral/bmp/ui/transition.c"
-
-#include "../../nonnon/bridge/gdi.c"
+#include "../../nonnon/bridge/app/hunyapiyo3/hunyapiyo3.c"
 
 
 #endif // #ifdef N_GITHUB_REPO

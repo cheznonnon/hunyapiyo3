@@ -42,11 +42,6 @@
 
 
 
-#include "hunyapiyo3.c"
-
-
-
-
 @interface NonnonGame ()
 
 @end
@@ -83,7 +78,7 @@
 	n_hunyapiyo3_init( p );
 //NSLog( @"%d %d", p->sx, p->sy );
 
-	p->self = self;
+	//p->self = self;
 
 
 	CGFloat sx = p->sx;
@@ -105,7 +100,7 @@
 
 
 	p->refresh = TRUE;
-	n_mac_timer_init( p->self, @selector( n_timer_method ), 1 );
+	n_mac_timer_init( self, @selector( n_timer_method ), 1 );
 
 }
 
@@ -115,17 +110,17 @@
 	n_hunyapiyo3 *p = &hunyapiyo3;
 
 
-	n_bmp_carboncopy( &p->canvas, &p->transition_bmp_old );
+	n_bmp_carboncopy( p->canvas, &p->transition_bmp_old );
 
 	n_hunyapiyo3_metrics( p );
 	n_hunyapiyo3_gdi_background( p, &p->bmp_bg );
-	n_bmp_flush_fastcopy( &p->bmp_bg, &p->canvas );
+	n_bmp_flush_fastcopy( &p->bmp_bg, p->canvas );
 
 	n_bmp_free( &p->bmp_font );
 
 	n_hunyapiyo3_loop( p );
 
-	n_bmp_carboncopy( &p->canvas, &p->transition_bmp_new );
+	n_bmp_carboncopy( p->canvas, &p->transition_bmp_new );
 
 
 	p->transition_onoff = TRUE;
@@ -180,7 +175,7 @@
 
 	//n_mac_image_imagerep_sync( p->rep, &p->canvas );
 
-	n_mac_image_imagerep_alias_fast( p->rep, &p->canvas );
+	n_mac_image_imagerep_alias_fast( p->rep, p->canvas );
 
 	n_mac_image_nbmp_direct_draw_faster( p->rep, &hunyapiyo3_rect, FALSE );
 
@@ -231,7 +226,7 @@
 //NSPoint pt = [theEvent locationInWindow];
 //NSLog( @"%f %f", pt.x, pt.y );
 
-	hunyapiyo3.pt = n_mac_image_position_flip( &hunyapiyo3.canvas, [theEvent locationInWindow] );
+	hunyapiyo3.pt = n_mac_image_position_flip( hunyapiyo3.canvas, [theEvent locationInWindow] );
 
 }
 
@@ -247,7 +242,7 @@
 
 	if ( hunyapiyo3.phase == N_HUNYAPIYO3_PHASE_MAIN )
 	{
-		hunyapiyo3.pt = n_mac_image_position_flip( &hunyapiyo3.canvas, [theEvent locationInWindow] );
+		hunyapiyo3.pt = n_mac_image_position_flip( hunyapiyo3.canvas, [theEvent locationInWindow] );
 		n_hunyapiyo3_main( &hunyapiyo3 );
 	} else
 	if ( hunyapiyo3.phase == N_HUNYAPIYO3_PHASE_PERC )
@@ -261,7 +256,7 @@
 			hunyapiyo3.answer_check_onoff = TRUE;
 		}
 
-		hunyapiyo3.pt = n_mac_image_position_flip( &hunyapiyo3.canvas, [theEvent locationInWindow] );
+		hunyapiyo3.pt = n_mac_image_position_flip( hunyapiyo3.canvas, [theEvent locationInWindow] );
 		n_hunyapiyo3_last( &hunyapiyo3 );
 	}
 
@@ -285,12 +280,12 @@
 	} else
 	if ( hunyapiyo3.phase == N_HUNYAPIYO3_PHASE_MAIN )
 	{
-		hunyapiyo3.pt = n_mac_image_position_flip( &hunyapiyo3.canvas, [theEvent locationInWindow] );
+		hunyapiyo3.pt = n_mac_image_position_flip( hunyapiyo3.canvas, [theEvent locationInWindow] );
 		n_hunyapiyo3_main( &hunyapiyo3 );
 	} else
 	if ( hunyapiyo3.phase == N_HUNYAPIYO3_PHASE_PERC )
 	{
-		hunyapiyo3.pt = n_mac_image_position_flip( &hunyapiyo3.canvas, [theEvent locationInWindow] );
+		hunyapiyo3.pt = n_mac_image_position_flip( hunyapiyo3.canvas, [theEvent locationInWindow] );
 		n_hunyapiyo3_last( &hunyapiyo3 );
 	}
 
@@ -311,14 +306,14 @@
 
 		hunyapiyo3.button_press_offset = hunyapiyo3.button_press_offset_default;
 
-		hunyapiyo3.pt = n_mac_image_position_flip( &hunyapiyo3.canvas, [theEvent locationInWindow] );
+		hunyapiyo3.pt = n_mac_image_position_flip( hunyapiyo3.canvas, [theEvent locationInWindow] );
 		n_hunyapiyo3_main( &hunyapiyo3 );
 	} else
 	if ( hunyapiyo3.phase == N_HUNYAPIYO3_PHASE_PERC )
 	{
 		hunyapiyo3.button_press_offset = hunyapiyo3.button_press_offset_default;
 
-		hunyapiyo3.pt = n_mac_image_position_flip( &hunyapiyo3.canvas, [theEvent locationInWindow] );
+		hunyapiyo3.pt = n_mac_image_position_flip( hunyapiyo3.canvas, [theEvent locationInWindow] );
 		n_hunyapiyo3_last( &hunyapiyo3 );
 	}
 
